@@ -9,22 +9,21 @@ const studentSchema = new mongoose.Schema({
     },
     reg_no:{
         type:String,
-        ref:"Academic",
         required:true
     },
     phone:{
         type:Number,
         required:true
     },
-    docuent_id:[{
+    document_id:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"Document",
         required:false
-    }]
+    }
 });
 
 const academicSchema = new mongoose.Schema({
-    _id:{
+    reg_no:{
         type:String,
         required:true,
         unique:true,
@@ -45,12 +44,7 @@ const academicSchema = new mongoose.Schema({
         type:String,
         required:true,
     }],
-    certificate:[{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"Document",
-        required:false
-    }]
-},{_id:flase});
+},{_id:false});
 
 const documentSchema = new mongoose.Schema({
     path:{
