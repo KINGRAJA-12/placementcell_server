@@ -1,4 +1,11 @@
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
+
+const ACCESS_TOKEN_SECRET = "Hello, I am Access Token";
+const REFRESH_TOKEN_SECRET = "Hello, I am Refresh Token";
+
 const authenticateToken = (req, res, next) => {
+
     const authHeader = req.headers.authorization;
     const token = authHeader && authHeader.split(" ")[1]; // Extract token from "Bearer <token>"
 

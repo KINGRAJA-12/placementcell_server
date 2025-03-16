@@ -3,8 +3,9 @@ const cors = require('cors')
 const connectDB = require('./db');
 const auth = require('./routes/auth')
 const cookieParser = require("cookie-parser");
-const authenticateToken = require('./services/protect');
-const studentDetail = require('./routes/studentdetail');
+const authenticateToken = require('./services/protect.js');
+const studentDetail = require('./routes/studentdetail.js');
+const recruiter = require('./routes/recrutordetail.js');
 
 const app = express();
 const PORT = process.env.PORT || 5000; 
@@ -19,7 +20,8 @@ app.use(express.json());
 
 app.use("/v1/userauth",auth)
 app.use(authenticateToken)
-app.use("/v1/student-detail", studentDetail)
+app.use("/v1/studentdetail", studentDetail);
+app.use("/v1/recruiter",recruiter);
 connectDB();
 
 app.listen(PORT, () => {

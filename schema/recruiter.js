@@ -1,50 +1,37 @@
 const mongoose = require('mongoose');
 
 const recruiterSchema = new mongoose.Schema({
-    user_id:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"User",
-        required:true
+    user_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+        index: true, // Optional: If frequently searching by user_id
     },
-    phone:{
-        type:Number,
-        required:true
+    phone: {
+        type: String, // Changed to String for better flexibility
+        required: true,
     },
-    companyId:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"Company",
-        required:true,
+    companyName: {
+        type: String,
+        required: true,
     },
-    jobId:[{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"Job",
-        required:flase
+    contactNo: {
+        type: String, // Kept as String (optional)
+        required: false,
+    },
+    address: {
+        type: String,
+        required: false,
+    },
+    jobId: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Job",
+        required: false, // Fixed typo
+        index: true, // Optional: If frequently searching by jobId
     }]
-
 });
 
-const companySchema = new mongoose.Schema({
-    companyName:{
-        type:String,
-        required:true
-    },
-    contactNo:{
-        type:String,
-        required:false
-    },
-    address1:{
-        type:String,
-        required:false,
-    },
-    addresss:{
-        type:String,
-        required:false
-    },
-    email:{
-        type:String,
-        required:true
-    }
-});
+
 
 const jobSchema = new mongoose.Schema({
     jobRole:{
@@ -60,14 +47,44 @@ const jobSchema = new mongoose.Schema({
         type:String,
         required:false,
     },
-    deparment:{
+    department:{
         type:String,
         required:true,
+    },
+    recruiterId: { // Add this field to reference the recruiter
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Recruiter', // Reference to Recruiter model
+        required: true
+    },
+    applicants:{
+        type:[String],
+        require:false
     }
 });
 
+// Method to add applicant
+jobSchema.methods.addApplicant = async function(userId) {
+    // Ensure the userId is a mongoose ObjectId if it's passed as a string
+    const objectId = new mongoose.Types.ObjectId(userId);  // Use `new` to create ObjectId
+
+    if (!this.applicants.includes(objectId)) {
+        this.applicants.push(objectId);
+        await this.save();
+    } else {
+        throw new Error("User has already applied.");
+    }
+};
+
+jobSchema.methods.hasUserApplied = async function(userId) {
+    // Ensure the userId is a mongoose ObjectId if it's passed as a string
+    const objectId = new mongoose.Types.ObjectId(userId);  // Use `new` to create ObjectId
+
+    // Check if the userId is already in the applicants array
+    return this.applicants.includes(objectId);
+};
+
+
 const Recruiter = mongoose.model("Recruiter", recruiterSchema);
-const Company = mongoose.model("Company",companySchema);
 const Job = mongoose.model("Job",jobSchema);
 
-module.exports ={Recruiter, Company, Job};
+module.exports ={Recruiter,  Job};
